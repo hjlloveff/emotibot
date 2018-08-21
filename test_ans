@@ -1,0 +1,71 @@
+[31msolr [0m 
+{
+  "responseHeader":{
+    "status":0,
+    "QTime":0,
+    "params":{
+      "q":"database:\"csbot_other\"",
+      "indent":"true",
+      "rows":"1",
+      "wt":"json"}},
+  "response":{"numFound":0,"start":0,"docs":[]
+  }}
+[31mconsul [0m 
+[{"ID":"","Node":"node0","Address":"172.17.0.1","Datacenter":"dc1","TaggedAddresses":null,"NodeMeta":null,"ServiceID":"solr","ServiceName":"solr","ServiceTags":[],"ServiceAddress":"","ServicePort":8081,"ServiceEnableTagOverride":false,"CreateIndex":7,"ModifyIndex":7}]
+[31msentence-type [0m 
+否定陈述句
+[31mcommon-parser-service [0m 
+{"status_code":0,"status_message":"SUCCESS","processed_text":"我想明天订1张去上海机票","time_module":[{"text":"明天","begin_index":2,"end_index":4,"begin_time":"2018-06-15 00:00:00","end_time":"2018-06-15 23:59:59","credible_unit":"DAY"}]}
+[31mintent-support [0m 
+{
+    "type": "intent(WangXin)",
+    "predictions": [
+        {
+            "score": "91.1714851856",
+            "other_info": [],
+            "label": "其他"
+        }
+    ],
+    "version": "4.1.0"
+}
+[31mfunction-intent [0m 
+{"predictions": [{"label": "求，笑话", "other_info": [], "score": 98}], "type": "intent(function)", "updated_date": "2018-04-16", "version": "1.0.0"}
+[31memotion-support [0m 
+{"predictions": [{"action": "", "label": "愤怒", "score": "93"}], "type": "mood(CHAT-EMOTION)", "updated_date": "2017-12-19", "version": "1.0.0"}
+[31mwordtovecservice [0m 
+0.725752
+[31mcustom-inference-service [0m 
+{"Status": "Success", "Msg": {"0": 0.9999999663782637, "1": 0.9048714329346519}}
+[31msnlu-all [0m 
+[{"query": "我喜  欢你", "nlpState": 0, "stateCode": 0, "segment": [{"word": "我", "pos": "rr"}, {"word": "喜", "pos": "v"}, {"word": "  ", "pos": "w"}, {"word": "欢", "pos": "a"}, {"word": "你", "pos": "rr"}]}]
+[31mfaq-module-20 [0m 
+{"code":-3,"message":"SSM Exception, code:-3, details:java.lang.NullPointerException, cause:java.lang.NullPointerException","data":"SSM Exception, code:-3, details:java.lang.NullPointerException, cause:java.lang.NullPointerException\n\tat com.emotibot.solution.faq.utils.SSMException.unknow(SSMException.java:62)\n\tat com.emotibot.solution.faq.SSMResult.unknowException(SSMResult.java:51)\n\tat com.emotibot.solution.faq.SSMMainProcessor.process(SSMMainProcessor.java:198)\n\tat com.emotibot.solution.faq.SSMMainProcessor.process(SSMMainProcessor.java:40)\n\tat com.emotibot.solution.faq.SSMServlet$WebServlet.doPost(SSMServlet.java:104)\n\tat javax.servlet.http.HttpServlet.service(HttpServlet.java:707)\n\tat javax.servlet.http.HttpServlet.service(HttpServlet.java:790)\n\tat org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:812)\n\tat org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:587)\n\tat org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:517)\n\tat org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)\n\tat org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)\n\tat org.eclipse.jetty.server.Server.handle(Server.java:499)\n\tat org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:311)\n\tat org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:257)\n\tat org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:544)\n\tat org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:635)\n\tat org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:555)\n\tat java.lang.Thread.run(Thread.java:745)\nCaused by: java.lang.NullPointerException\n\tat com.emotibot.solution.faq.SSMMainProcessor.process(SSMMainProcessor.java:93)\n\t... 16 more\n"}
+[31mchat-service [0m 
+{"module":"editorial_sport","res":{"match_question":"你的生日是什么时候？","answer":"我出生于2月14日","score":78.11,"source":"csbot (83.10 * 1.00 * 0.94)","topic":[],"emotion":[],"speech_act":[]}}
+[31mtask-engine [0m 
+{"TTSText": null, "HitScenarioID": null, "FinalFlag": -1}
+[31memotibot-controller-20 [0m 
+{"status":0,"message":"success","tspan":387,"data":[{"type":"text","subType":"text","value":"我出生于2月14日","data":[],"extendData":""}],"info":{"module":"chat","textScore":78,"emotion":"中性","emotionScore":80,"tokens":["你/rr","的/ude1","生日/n","是/vshi"]},"customInfo":"","extendData":""}
+[31mmulticustomer [0m 
+ok
+[31mbot-bot-factory-backend-service [0m 
+ok
+[31mrobotwriter [0m 
+{"answer": "[\u5317\u4eac\u591a\u4e91\uff0c\u9884\u8ba119~31\u5ea6\uff0c\u6b64\u523b30\u2103\u3002\u98ce\u6709\u70b9\u5927\uff0c\u6ce8\u610f\u5c18\u571f\u98de\u626c\u3002\u7a7a\u6c14\u8fd8\u597d\uff0c\u4e0d\u7528\u62c5\u5fc3\u3002],[\u660e\u65e5\u5929\u6c14\u591a\u4e91\uff0c20~33\u5ea6\uff0c\u4e2d\u7ea7\u98ce\uff0c\u98ce\u529b2\u7ea7\u3002]", "statusCode": 200}
+[31mfunction-content [0m 
+{"result":[{"currencyF":"JPY","currencyF_Name":"日元","currencyT_Name":"巴林第纳尔","currencyT":"BHD","currencyFD":1.0,"exchange":0.0033306845}],"version":"1.0.1","status":0,"reason":"成功的返回","type":"exchange.rate","useTime":0}
+[31mfunction-web-service [0m 
+{"status_code":0,"status_msg":"SUCCESS","function":{"answers":"","subModule":"","score":0.0}}
+[31mtask-parser [0m 
+{"status_code":0,"msg_response":{"update":{"date_module":{"date_depart":"2018-06-15"},"place_module":{"from_place":{"province":"北京","city":"北京市","place":"北京市","text":"北京"},"to_place":{"province":"上海","city":"上海市","place":"上海市","text":"上海"}}}}}
+[31mfaq-module-dal [0m 
+{"errno":"OK","actualResults":["template_custom","csbot"],"results":["OK","OK"]}
+[31mparser-service [0m 
+{"city":[],"citydetails":[],"landmark":[],"checkindate":[{"date":"2018-06-15 08:00:00","text":"15号","ispredict":false}],"checkoutdate":[{"date":"2018-06-17 08:00:00","text":"","ispredict":false}],"days":["2"],"price":["300"],"star":[],"isoverseas":false,"unknowndate":[{"date":"2018-06-10 08:00:00","text":"10号","ispredict":false},{"date":"2018-06-15 08:00:00","text":"花费300","ispredict":false}],"hotelname_details":["10号天气不错,十五号入住,住两天,花费300左右"],"landmark_reference":[]}
+[31madmin-ui [0m 
+success
+[31msimple-ft-service [0m 
+{
+  "Msg": "Model not found!",
+  "Status": "Error"
+}

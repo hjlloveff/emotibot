@@ -1,0 +1,31 @@
+version: '2.1'
+services:
+    init-db:
+      environment:
+        INIT_MONGO_CLUSTER: "true"
+        MONGO1: ${DB_HOST_1}
+        MONGO2: ${DB_HOST_2}
+        MONGO3: ${DB_HOST_3}
+        RS: "rs1"
+        PORT_SHARD: 27017
+        RS_CONF: "cnf-serv"
+        PORT_CONF: 27018
+        RS1: "rs1"
+        PORT_ROUTER: 27019
+        PORT1: 27017
+        PORT2: 27017
+        PORT3: 27017
+        MONGOS1: ${DB_HOST_1}
+        MONGOS2: ${DB_HOST_2}
+        MONGOS3: ${DB_HOST_3}
+        MONGO11: ${DB_HOST_1}
+        MONGO12: ${DB_HOST_2}
+        MONGO13: ${DB_HOST_3}
+        # mongo data
+        INIT_MONGO_INIT: "true"
+        INIT_MONGO_PORT: 27019
+        # mysql data
+        INIT_MYSQL_INIT: "true"
+        # es data
+        INIT_ELASTICSEARCH_INIT: "true"
+

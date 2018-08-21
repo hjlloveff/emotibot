@@ -1,0 +1,491 @@
+version: '2.1'
+services:
+
+# ========== Module ==========
+  faq-platform-dal:
+      image: docker-reg.emotibot.com.cn:55688/faq-platform-dal:96d7f78
+      container_name: faq-platform-dal
+      ports:
+        - "8885:8885"
+      restart: always
+      logging:
+        options:
+          max-size: "5M"
+          max-file: "10"
+        driver: json-file
+      env_file:
+        - ./dev.env
+      volumes:
+        - /etc/localtime:/etc/localtime
+  admin-ui:
+    image: docker-reg.emotibot.com.cn:55688/admin-ui:20180730-4a7f2b0
+    container_name: admin
+    ports:
+      - "80:80"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+  custom-inference-service:
+    image: docker-reg.emotibot.com.cn:55688/custom_inference_service:da02b61
+    container_name: se
+    ports:
+      - "15601:8888"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+  bot-factory-backend-service:
+    image: docker-reg.emotibot.com.cn:55688/bot-factory-backend-service:20180720-49cd3a3
+    container_name: bfb
+    ports:
+      - "15501:15501"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+  chat-service:
+    image: docker-reg.emotibot.com.cn:55688/chat_service:2018051819-f2a8448
+    container_name: chat
+    ports:
+      - "10930:8080"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+  parser-service:
+    image: docker-reg.emotibot.com.cn:55688/parser-service:2235bcc
+    container_name: parser-service
+    ports:
+      - "14701:9901"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+  common-parser-service:
+    image: docker-reg.emotibot.com.cn:55688/common-parser-service:c183d4a
+    container_name: cps
+    ports:
+      - "14901:9902"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /home/deployer/infrastructure/volumes/common-parser-service:/tmp/CommonParserService
+
+  emotibot-controller:
+    image: docker-reg.emotibot.com.cn:55688/emotibot-controller-20:20180727-604aed7
+    container_name: controller
+    ports:
+      - "8080:8885"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+  emotion-support:
+    image: docker-reg.emotibot.com.cn:55688/emotion-support:c90b5b5-SUSE
+    container_name: mood
+    ports:
+      - "21103:80"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+  function-content:
+    image: docker-reg.emotibot.com.cn:55688/function-content:26df658-SUSE
+    container_name: function-context
+    ports:
+      - "14001:8080"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+  function-intent:
+    image: docker-reg.emotibot.com.cn:55688/function-intent:0466565-SUSE
+    container_name: function-intent
+    ports:
+      - "14399:80"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+  function-web-service:
+    image: docker-reg.emotibot.com.cn:55688/function-web-service:2018072610-07e02a8
+    container_name: fws
+    ports:
+      - "13501:8086"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+  human-intent:
+    image: docker-reg.emotibot.com.cn:55688/human-intent:v4.1.0
+    container_name: human-intent
+    ports:
+      - "21302:8080"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+  
+  robotwriter:
+    image: docker-reg.emotibot.com.cn:55688/robotwriter:20180413-19de1a6-SUSE
+    container_name: rw
+    ports:
+      - "10101:10101"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    environment:
+      DOCKER_PORT: "10101"
+      CONTENT_SERVER: "https://content.emotibot.com"
+      CONTENT_KEY: "2WDGS5SCH68RWDLC76BI9J6CZEKJM5QM"
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+  sentence-type:
+    image: docker-reg.emotibot.com.cn:55688/sentence_type:91dc74a-SUSE
+    container_name: sentence-type
+    ports:
+      - "13401:13401"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+  snlu:
+    image: docker-reg.emotibot.com.cn:55688/snlu-all:b2ed413
+    container_name: snlu
+    ports:
+      - "13901:13901"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+  solr-etl-agent:
+    image: docker-reg.emotibot.com.cn:55688/solr-etl-agent:6f1867a-SUSE
+    container_name: solr-etl
+    ports:
+      - "14401:1337"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+  task-engine:
+    image: docker-reg.emotibot.com.cn:55688/task-engine:20180723-21d1d23
+    container_name: te
+    ports:
+      - "14101:14101"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+  rc-word2vec:
+    image: docker-reg.emotibot.com.cn:55688/rc_word2vec:e42c588-SUSE
+    container_name: w2v
+    ports:
+      - "11501:11501"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+  bf2:
+    image: docker-reg.emotibot.com.cn:55688/bf2:2018072716-5adb4af
+    container_name: bf2
+    ports:
+      - "3000:80"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtimea
+      - /home/deployer/infrastructure/volumes/bf2:/var/www/html/Files
+  faq-module:
+    image: docker-reg.emotibot.com.cn:55688/faq_module_2.0_bf_dev:23f1b85
+    container_name: ssm
+    ports:
+      - "11015:8080"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+  simple-ft-service:
+    image: docker-reg.emotibot.com.cn:55688/simple-ft-service:137c8c4
+    container_name: ml
+    ports:
+      - "8895:8888"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+  
+  task-parser:
+    image: docker-reg.emotibot.com.cn:55688/task_parser:133db90
+    container_name: tp
+    ports:
+      - "12101:8089"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+  intent-engine:
+    image: docker-reg.emotibot.com.cn:55688/intent-engine:eca22d7
+    container_name: intent-engine
+    ports:
+      - "15001:80"
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+    restart: always
+    logging:
+      options:
+        max-file: "20"
+        max-size: 20m
+  intent-engine-trainer:
+    image: docker-reg.emotibot.com.cn:55688/intent-engine-trainer:bbe925d
+    container_name: intent-engine-trainer
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+    restart: always
+    logging:
+      options:
+        max-file: "20"
+        max-size: 20m
+  ner-nlu:
+    image: docker-reg.emotibot.com.cn:55688/ner-nlu:201805291037
+    container_name: ner
+    ports:
+        - "8082:8082"
+    environment:
+        TZ: Asia/Shanghai
+        AC_SERVICE_PORT: 8082
+    env_file:
+      - dev.env
+    logging:
+        options:
+            max-size: 20m
+            max-file: "20"
+    mem_limit: 5125m
+    restart: always
+
+  speechact4tde:
+    image: docker-reg.emotibot.com.cn:55688/nlu-speechact4tde:20180403-5577374
+    container_name: speechact
+    ports:
+        - "10998:10998"
+    logging:
+        options:
+            max-size: 20m
+            max-file: "20"
+    mem_limit: 5125m
+    environment:
+        SPEECHACT_WEB_PORT: 10998
+        TZ: Asia/Shanghai
+    env_file:
+      - dev.env
+    restart: always
+
+   
+  nlu-tde:
+    image: docker-reg.emotibot.com.cn:55688/nlu-tde:20180712-bb4167d
+    container_name: tde
+    environment:
+      SPEECHACT_SERVER_URL: http://172.17.0.1:10998/
+      NAMEDENTITY_SERVICE_URL: http://172.17.0.1:8082/
+      TE_SERVER_PORT: 10999
+      TZ: Asia/Shanghai
+      TDE_CONTAINER_NAME: nlu-tde
+      MONGO_HOST: 172.17.0.1
+      MONGO_PORT: 27017
+    env_file:
+      - dev.env
+    ports:
+      - "10999:10999"
+    logging:
+        options:
+          max-size: 20m
+          max-file: "20"
+    mem_limit: 5125m
+    volumes:
+      - /home/deployer/infrastructure/volumes/tde:/usr/tde
+    restart: always
+
+  statistic:
+    image: docker-reg.emotibot.com.cn:55688/statistic:20180719-eadc53d
+    container_name: stats
+    ports:
+      - "8200:8200"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    env_file:
+      - ./dev.env
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+  logstash:
+    image: docker-reg.emotibot.com.cn:55688/logstash-oss:6.3.0-20180718-a094ea9
+    container_name: logstash
+    ports:
+      - "5000:5000"
+    restart: always
+    logging:
+      options:
+        max-size: "5M"
+        max-file: "10"
+      driver: json-file
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+volumes:
+  nlu-tde-module:

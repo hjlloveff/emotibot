@@ -1,0 +1,42 @@
+version: '2.1'
+services:
+
+  faq-platform-dal:
+    environment:
+      - FAQ_PLATFORM_DAL_MONGO_PORT=27019
+  admin-ui:
+    environment:
+      - ADMIN_SERVER_MYSQL_URL=${DB_HOST_1}:3306
+      - ADMIN_SERVER_AUDIT_MYSQL_URL=${DB_HOST_1}:3306
+      - ADMIN_STATISTIC_MYSQL_URL=${DB_HOST_1}:3306
+      - ADMIN_AUTH_MYSQL_URL=${DB_HOST_1}:3306
+      - ADMIN_AUTH_AUDIT_MYSQL_URL=${DB_HOST_1}:3306
+  bot-factory-backend-service:
+    environment:
+      - BFB_MYSQL_DB_SERVER=${DB_HOST_1}:3306
+      - BFB_STATIC_MYSQL_DB_SERVER=${DB_HOST_1}:3306
+  emotibot-controller:
+    environment:
+      - EC_MYSQL_EMOTIBOT_URL=jdbc:mysql://${DB_HOST_1}:3306?useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=false
+      - EC_MYSQL_BACKEND_LOG_URL=jdbc:mysql://${DB_HOST_1}:3306/backend_log?useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=false
+  function-web-service:
+    environment:
+      - FWS_MYSQL_EMOTIBOT_URL=jdbc:mysql://${DB_HOST_1}:3306/emotibot?useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=false
+  task-engine:
+    environment:
+      - TE_MYSQL_DB_SERVER=${DB_HOST_1}:3306
+  bf2:
+    environment:
+      - HT_DB_HOST=${DB_HOST_1}
+      - HT_MASTER_DB_HOST=${DB_HOST_1}
+  simple-ft-service:
+    environment:
+      - SFT_STORAGE_MONGODB_PORT=27019
+  intent-engine:
+    environment:
+      - IE_MONGO_URI=mongodb://172.17.0.1:27019
+  intent-engine-trainer:
+    environment:
+      - IE_MONGO_URI=mongodb://172.17.0.1:27019
+  
+

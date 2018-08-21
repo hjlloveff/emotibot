@@ -1,0 +1,140 @@
+version: '2.1'
+services:
+    init-db:
+      image: docker-reg.emotibot.com.cn:55688/init-db:2018073115-077ba4c-BFOP
+      container_name: init-db
+      environment:
+        INIT_MONGO_INIT: "true"
+        INIT_MONGO_HOST: 172.17.0.1
+        INIT_MONGO_PORT: 27017
+        INIT_MONGO_USER:
+        INIT_MONGO_PASS:
+        INIT_MYSQL_INIT: "true"
+        INIT_MYSQL_HOST: 172.17.0.1
+        INIT_MYSQL_PORT: 3306
+        INIT_MYSQL_USER: root
+        INIT_MYSQL_PASSWORD: password
+        INIT_ELASTICSEARCH_INIT: "true"
+        INIT_ELASTICSEARCH_HOST: 172.17.0.1
+        INIT_ELASTICSEARCH_PORT: 9200
+        INIT_ELASTICSEARCH_INDEX: records
+        INIT_TDE_INIT: "true"
+      volumes:
+        - /home/deployer/infrastructure/volumes/tde:/tde
+
+
+    test-script:
+      image: docker-reg.emotibot.com.cn:55688/test-script:2018072412-a9d2e42-BFOP
+      container_name: test
+      environment:
+        TEST_MYSQL_HOST: 172.17.0.1
+        TEST_MYSQL_PORT: 3306
+        TEST_MYSQL_USER: root
+        TEST_MYSQL_PASS: password
+        TEST_MONGO_HOST: 172.17.0.1
+        TEST_MONGO_PORT: 27017
+        TEST_REDIS_HOST: 172.17.0.1
+        TEST_REDIS_PORT: 6379
+        TEST_REDIS_PASS: password
+        TEST_SOLR_URL: 172.17.0.1:8081
+        TEST_CONSUL_URL: 172.17.0.1:8500
+        TEST_ST_URL: 172.17.0.1:13401
+        TEST_CPS_URL: 172.17.0.1:14901
+        TEST_INTENT_URL: 172.17.0.1:21302
+        TEST_F_INTENT_URL: 172.17.0.1:14399
+        TEST_EMOTION_URL: 172.17.0.1:21103
+        TEST_W2V_URL: 172.17.0.1:11501
+        TEST_CIS_URL: 172.17.0.1:15601
+        TEST_NLU_URL: 172.17.0.1:13901
+        TEST_FAQ_URL: 172.17.0.1:11015
+        TEST_CHAT_URL: 172.17.0.1:10930
+        TEST_TASK_URL: 172.17.0.1:14101
+        TEST_EC_URL: 172.17.0.1:8080
+        TEST_MC_URL: 172.17.0.1:14501
+        TEST_BFB_URL: 172.17.0.1:15501
+        TEST_RW_URL: 172.17.0.1:10101
+        TEST_FC_URL: 172.17.0.1:14001
+        TEST_FUN_URL: 172.17.0.1:13501
+        TEST_TP_URL: 172.17.0.1:12101
+        TEST_DAL_URL: 172.17.0.1:8885
+        TEST_PS_URL: 172.17.0.1:14701
+        TEST_FUN_URL: 172.17.0.1:13501
+        TEST_ADMIN_URL: 172.17.0.1:80
+        TEST_FUN_URL: 172.17.0.1:13501
+        TEST_ML_URL: 172.17.0.1:8895
+  
+    graphite-statsd:
+      image: docker-reg.emotibot.com.cn:55688/graphite-statsd:20180718-71f1bc3
+      container_name: graphite-statsd
+      ports:
+        - 8001:8001
+        - 2003-2004:2003-2004
+        - 2023-2024:2023-2024
+        - 8125:8125/udp
+        - 8126:8126
+      restart: always
+      logging:
+        options:
+          max-size: "5M"
+          max-file: "10"
+        driver: json-file
+      volumes:
+        - graphite:/var/lib/graphite
+        - /etc/localtime:/etc/localtime
+
+    grafana:
+      image: docker-reg.emotibot.com.cn:55688/grafana:5.2.0-20180718-0f3778e
+      container_name: grafana
+      ports:
+        - 3001:3001
+      restart: always
+      logging:
+        options:
+          max-size: "5M"
+          max-file: "10"
+        driver: json-file
+      environment:
+        - GF_INSTALL_PLUGINS=grafana-piechart-panel
+      volumes:
+        - grafana-storage:/var/lib/grafana
+        - /etc/localtime:/etc/localtime
+
+    netdata:
+      image: firehol/netdata
+      container_name: netdata
+      ports:
+        - "19999:19999"
+      restart: always
+      logging:
+        options:
+          max-size: "5M"
+          max-file: "10"
+        driver: json-file
+
+    kibana:
+      image: docker-reg.emotibot.com.cn:55688/kibana-oss:6.2.3
+      container_name: kibana
+      environment:
+        SERVER_NAME: kibana-server
+        ELASTICSEARCH_URL: http://172.17.0.1:9200
+      ports:
+        - "5601:5601"
+
+    phpadmin:
+      image: docker-reg.emotibot.com.cn:55688/phpmyadmin:20180512
+      container_name: phpadmin
+      environment: 
+        PMA_HOST: 172.17.0.1
+      ports:
+        - "3380:80"
+
+    mongo-express:
+      image: docker-reg.emotibot.com.cn:55688/mongo-express:20180512
+      container_name: mongo-express
+      environment: 
+        ME_CONFIG_MONGODB_SERVER: 172.17.0.1
+      ports:
+        - "3381:8081"
+volumes:
+  graphite:
+  grafana-storage:

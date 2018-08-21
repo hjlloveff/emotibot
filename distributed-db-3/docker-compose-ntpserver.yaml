@@ -1,0 +1,14 @@
+version: '2.1'
+services:
+    ntp-server:
+       image: 180.169.210.141:55788/bfop/ntp:v3
+       container_name: ntp-server
+       restart: always
+       privileged: true
+       environment:
+         - NTP_CLUSTER_IP_LIST={DB_HOST_1},{DB_HOST_2},{DB_HOST_3}
+         - NTP_NODE_USER=deployer
+         - NTP_NODE_PASSWORD=Emotibot1
+         - SPECIFY_NTP_SERVER=cn.pool.ntp.org
+       volumes:
+          - /etc/localtime:/etc/localtime

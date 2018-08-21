@@ -1,0 +1,34 @@
+version: '2.1'
+services:
+  haproxy-keepalived:
+    image: 172.16.101.70/emotibot-k8s/haproxy-keepalived:v3
+    privileged: true
+    network_mode: host
+    restart: always
+    environment:
+      KEEPALIVED_STATE: "MASTER"
+      KEEPALIVED_INTERFACE: "eno16780032"
+      KEEPALIVED_PRIORITY: "150"
+      KEEPALIVED_V_ROUTER_ID: "82"
+      KEEPALIVED_VIP: "172.16.101.12"
+      haproxy_item1: |-
+        listen controller
+            bind *:12345
+            mode http
+            maxconn 300
+            balance hdr(sessionId)
+            log     global
+            hash-type consistent
+            server server1 172.16.101.143:8080 maxconn 300 check
+            server server2 172.16.101.100:8080 maxconn 300 check
+            server server3 172.16.101.50:8080 maxconn 300 check
+        listen mysql
+            bind *:12346
+            mode http
+            maxconn 3000
+            balance static-rr
+            #option  allbackups
+            log     global
+            server server1 172.16.101.143:3306 maxconn 300 check 
+            server server2 172.16.101.100:3306 maxconn 300 check backup
+            server server3 172.16.101.50:3306 maxconn 300 check backup

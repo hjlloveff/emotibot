@@ -1,0 +1,102 @@
+version: '2.1'
+services:
+
+    mysql:
+      image: docker-reg.emotibot.com.cn:55688/mgrmysql:5.7.22
+      environment:
+        - GROUP_SEEDS1=${DB_HOST_1}:33060
+        - GROUP_SEEDS2=${DB_HOST_2}:33060
+        - GROUP_SEEDS3=${DB_HOST_3}:33060
+        - DOCKERNET=172.17.0.0/16,172.16.101.0/24
+        - MGR_FIRST=${DB_MYSQL_FIRST}
+        - SERVER_ID=${DB_HOST_ID}
+        - GROUP_LOCAL_IP_PORT=33060
+        - MYSQL_ROOT_PASSWORD=password
+        - MYSQL_LOG_CONSOLE=true
+        - MYSQL_ROOT_HOST=%
+      extra_hosts:
+       - mysqlmgr1:${DB_HOST_1}
+       - mysqlmgr2:${DB_HOST_2}
+       - mysqlmgr3:${DB_HOST_3}
+      ports:
+       - 3306:3306
+       - 33060:33060
+      network_mode: "bridge"
+      container_name: ${DB_MYSQL_EXERA_HOSTS}
+      hostname: ${DB_MYSQL_EXERA_HOSTS}
+
+    zookeeper:
+        image: docker-reg.emotibot.com.cn:55688/zookeeper:3.4.12-v2
+        container_name: zookeeper
+        network_mode: "host"
+        restart: always
+        ports:
+            - "2181:2181"
+        environment:
+            ZOO_PORT: 2181
+            ZOO_DATA_DIR: /tmp/zookeeper
+            ZOO_DATA_LOG_DIR: /tmp/conf
+            ZOO_TICK_TIME: 2000
+            ZOO_INIT_LIMIT: 10
+            ZOO_SYNC_LIMIT: 5
+            SERVER_ID: ${DB_HOST_ID}
+            ZOO_SERVERS: server.1=${DB_HOST_1}:2888:3888 server.2=${DB_HOST_2}:2888:3888 server.3=${DB_HOST_3}:2888:3888
+        volumes:
+            - /home/deployer/infrastructure/volumes/zoo/data:/tmp/zookeeper
+            - /home/deployer/infrastructure/volumes/zoo/conf:/tmp/conf
+
+    solr:
+      network_mode: "host"
+      command: /opt/solr/bin/solr start -f -z ${DB_HOST_1}:2181,${DB_HOST_2}:2181,${DB_HOST_3}:2181
+      depends_on:
+        - zookeeper
+
+    consul:
+      network_mode: "host"
+      command: agent -disable-host-node-id -ui -server ${DB_CONSUL_CMD} -bind ${DB_HOST_SELF} -client 0.0.0.0
+
+    mongo:
+        container_name: "mongo-data"
+        image: 172.16.101.70/dbcluster-compose/mongo:cluster
+        network_mode: "host"
+        ports:
+            - "27017:27017"
+        volumes:
+            - /home/deployer/infrastructure/volumes/mongo/db:/data/db
+            - /home/deployer/infrastructure/volumes/mongo/configdb:/data/configdb
+        command: mongod --replSet rs1 --shardsvr --bind_ip 0.0.0.0 --cpu --port 27017 --nojournal --oplogSize 16 --noprealloc --smallfiles
+        restart: always
+
+    mongo-cnf:
+        container_name: "mongo-cnf"
+        image: 172.16.101.70/dbcluster-compose/mongo:cluster
+        network_mode: "host"
+        ports:
+            - "27018:27018"
+        volumes:
+            - /home/deployer/infrastructure/volumes/mongo-cnf/db:/data/db
+            - /home/deployer/infrastructure/volumes/mongo-cnf/configdb:/data/configdb
+        command: mongod --replSet cnf-serv --rest --configsvr --port 27018 --oplogSize 16 --noprealloc --smallfiles
+        restart: always
+        depends_on:
+        - "mongo"
+
+    mongo-router:
+        container_name: "mongo-router"
+        image: 172.16.101.70/dbcluster-compose/mongo:cluster
+        network_mode: "host"
+        ports:
+            - "27019:27019"
+        volumes:
+            - /home/deployer/infrastructure/volumes/mongo-router/db:/data/db
+            - /home/deployer/infrastructure/volumes/mongo-router/configdb:/data/configdb
+        command: mongos --port 27019 --configdb cnf-serv/${DB_HOST_1}:27018,${DB_HOST_2}:27018,${DB_HOST_3}:27018
+        restart: always
+        depends_on:
+        - "mongo"
+        - "mongo-cnf"
+    elasticsearch:
+        command: elasticsearch -E node.name="${DB_HOST_SELF}" -E cluster.name="BFOPcluster" -E node.master="true" -E node.data="true" -E network.host="0.0.0.0" -E discovery.zen.minimum_master_nodes=1  -E discovery.zen.ping.unicast.hosts="${DB_HOST_1},${DB_HOST_2},${DB_HOST_3}" -E http.cors.enabled=true -E http.cors.allow-origin="*"
+        environment:
+          ES_JAVA_OPTS: "-Xmx2G -Xms2G"
+          HEAD_MINUTOR_IP: ${DB_HOST_SELF}

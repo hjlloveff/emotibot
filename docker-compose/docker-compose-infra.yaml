@@ -1,0 +1,102 @@
+version: '2.1'
+services:
+
+    mysql:
+      image: docker-reg.emotibot.com.cn:55688/mysql:5.7
+      container_name: mysql
+      ports:
+        - 3306:3306
+      environment:
+          MYSQL_ROOT_PASSWORD: password
+          TZ: Asia/Taipei
+      mem_limit: 5125m
+      volumes:
+        - /home/deployer/infrastructure/volumes/mysql:/var/lib/mysql
+      restart: always
+      healthcheck:
+        test: "/usr/bin/mysql --user=root --password=password --execute=\"SHOW DATABASES;\""
+        interval: 3s
+        timeout: 3s
+        retries: 20
+
+    redis:
+      image: docker-reg.emotibot.com.cn:55688/redis
+      container_name: redis
+      ports:
+        - 6379:6379
+      restart: always
+      command: redis-server --requirepass password
+
+    solr:
+      image: docker-reg.emotibot.com.cn:55688/solr:5.5-SUSE-v11
+      container_name: solr
+      ports:
+        - "8081:8081"
+      environment:
+        TZ: Asia/Taipei
+        SOLR_PORT: 8081
+      volumes:
+        - /home/deployer/infrastructure/volumes/solr:/opt/solr/server/solr
+      restart: always
+
+    consul:
+      image: docker-reg.emotibot.com.cn:55688/consul:1.0.2-SUSE-v4
+      container_name: consul
+      ports:
+        - 8500:8500
+      environment:
+        TZ: Asia/Taipei
+      volumes:
+        - /home/deployer/infrastructure/volumes/consul/data:/consul/data
+        - /home/deployer/infrastructure/volumes/consul/config:/consul/config
+      restart: always
+      command: agent -ui -server -client 0.0.0.0 -bootstrap-expect=1
+      environment:
+          CONSUL_SOLR_HOSTS: 172.17.0.1
+          CONSUL_SOLR_PORTS: 8081
+
+      healthcheck:
+        test: "curl http://localhost:8500/"
+        interval: 3s
+        timeout: 3s
+        retries: 20
+
+    mongo:
+      image: docker-reg.emotibot.com.cn:55688/mongo:3.2.8
+      container_name: mongo
+      ports:
+        - 27017:27017
+      environment:
+          TZ: Asia/Taipei
+      mem_limit: 5125m
+      volumes:
+        - /home/deployer/infrastructure/volumes/mongo/db:/data/db
+        - /home/deployer/infrastructure/volumes/mongo/configdb:/data/configdb
+      restart: always
+      healthcheck:
+        test: "docker exec -i mongo echo 'db.runCommand(\"ping\").ok' | mongo localhost:27017/test --quiet"
+        interval: 3s
+        timeout: 3s
+        retries: 20
+
+    elasticsearch:
+      image: 172.16.101.70/dbcluster-compose/elasticsearch-head:v6.3.1
+      network_mode: host
+      container_name: es
+      ports:
+        - "9200:9200"
+        - "9300:9300"
+        - "9100:9100"
+      restart: always
+      logging:
+        options:
+          max-size: "5M"
+          max-file: "10"
+        driver: json-file
+      command: elasticsearch -E node.name="172.17.0.1" -E cluster.name="BFOPcluster" -E node.master="true" -E node.data="true" -E network.host="0.0.0.0" -E discovery.zen.minimum_master_nodes=1  -E discovery.zen.ping.unicast.hosts="172.17.0.1:9300" -E http.cors.enabled=true -E http.cors.allow-origin="*"
+      environment:
+        ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+        HEAD_MINUTOR_IP: localhost
+      volumes:
+        - /etc/localtime:/etc/localtime
+        - /home/deployer/infrastructure/volumes/elasticsearch:/usr/share/elasticsearch/data
